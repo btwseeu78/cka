@@ -1,0 +1,52 @@
+---
+apiVersion : v1
+kind: Service
+metadata:
+  name: db-service
+spec:
+  type: ClusterIP
+  ports:
+  - port: 3306
+  selector:
+    app: mysql-database
+...               
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db
+  labels:
+    app: mysql-database
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mysql-database
+  template:
+    metadata:
+      labels:
+        app: mysql-database
+    spec:
+      containers:
+      - image: mysql:5.7
+        name: mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: password
+        - name: MYSQL_DATABASE
+          value: crud_in_ci
+        command: ["mysqld"]
+        args: ["--init-file='/tmp/database/setup.sql'"]
+        volumeMounts:
+        - name: dbvol
+          mountPath: /tmp/database
+        - name: datapv
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: dbvol
+        hostPath:
+          path: /db
+      - name: datapv
+        persistentVolumeClaim:
+          claimName: task-pv-claim
+...
