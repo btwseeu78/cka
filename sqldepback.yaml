@@ -21,17 +21,26 @@ spec:
         env:
         - name:  MYSQL_ROOT_PASSWORD
           value: "password"
+        - name: MYSQL_USER
+          value: dba
+        - name: MYSQL_PASSWORD
+          value: "password"
         - name: MYSQL_DATABASE
-          value: crud_in_ci
+          value: crud_in_ci          
         ports:
-          - containerPort: 3306
+        - containerPort: 3306
         volumeMounts:
-        - name: mysql-initdb
-          mountPath: /docker-entrypoint-initdb.d
+        - name: config-data
+          mountPath: "/pod-data"
       volumes:
-        - name: mysql-initdb
-          persistentVolumeClaim:
-            claimName: mysql-initdb-pv-claim
+      - name: config-data
+        configMap:
+          name: sqldata
+          items:
+            - key: "sqldata.yaml"
+              path: "sqldata.sql"
+        
+...
 
   
     

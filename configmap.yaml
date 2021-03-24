@@ -1,0 +1,8 @@
+apiVersion: v1
+data:
+  sqldata.yaml: "USE crud_in_ci;\r\nCREATE TABLE users(user_id INT AUTO_INCREMENT,
+    name VARCHAR(50), email VARCHAR(50), created_at DATE, PRIMARY KEY(user_id));"
+kind: ConfigMap
+metadata:
+  name: mysqldata
+
